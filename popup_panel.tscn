@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://42d57s05mx3w"]
+
+[node name="HuntResultDisplay" type="PopupPanel"]
+visible = true
+
+[node name="Enemyname" type="Label" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+
+[node name="Enemystats" type="Label" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+
+[node name="Rewards" type="Label" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0

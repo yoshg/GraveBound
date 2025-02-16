@@ -1,0 +1,115 @@
+[gd_scene load_steps=8 format=3 uid="uid://dy84pghc6unmi"]
+
+[ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
+[ext_resource type="Texture2D" uid="uid://h52e0rohe6p1" path="res://assets/locations/Background.png.png" id="2_lio6s"]
+[ext_resource type="Script" path="res://HuntButton.gd" id="3_wxwgq"]
+[ext_resource type="Script" path="res://HuntResultDisplay.gd" id="5_6acxs"]
+[ext_resource type="FontFile" uid="uid://bgfqf10ynpro1" path="res://assets/fonts/VIRUST.ttf" id="6_ndfnc"]
+[ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgssb"]
+bg_color = Color(0.294118, 0.294118, 0.294118, 1)
+shadow_size = 5
+shadow_offset = Vector2(0, 4)
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4jmjs")
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4jmjs")
+
+[node name="TextureRect" type="TextureRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_lio6s")
+expand_mode = 3
+
+[node name="MainHbox" type="HBoxContainer" parent="HUD"]
+layout_mode = 0
+offset_left = 851.0
+offset_top = 19.0
+offset_right = 1087.0
+offset_bottom = 69.0
+
+[node name="MainVbox" type="VBoxContainer" parent="HUD/MainHbox"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="HUD/MainHbox/MainVbox"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Gold: 0"
+
+[node name="XPLabel" type="Label" parent="HUD/MainHbox/MainVbox"]
+layout_mode = 2
+text = "XP : 0"
+
+[node name="HuntButton" type="Button" parent="HUD/MainHbox"]
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+theme_override_colors/font_color = Color(0.831373, 0.831373, 0.831373, 1)
+theme_override_fonts/font = ExtResource("6_ndfnc")
+theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_dgssb")
+text = "Hunt"
+script = ExtResource("3_wxwgq")
+
+[node name="HuntCooldownTimer" type="Timer" parent="HUD/MainHbox/HuntButton"]
+wait_time = 1.681
+one_shot = true
+
+[node name="HuntResultDisplay" type="Panel" parent="HUD"]
+layout_mode = 0
+offset_left = 456.0
+offset_top = 153.0
+offset_right = 704.0
+offset_bottom = 409.0
+script = ExtResource("5_6acxs")
+
+[node name="MainVbox" type="VBoxContainer" parent="HUD/HuntResultDisplay"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 12.0
+offset_right = 103.0
+offset_bottom = 120.0
+
+[node name="EnemyLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
+
+[node name="StatsLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
+
+[node name="EnemyGraphic" type="TextureRect" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
+expand_mode = 5
+
+[node name="RewardsLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
+
+[node name="GoldXPContainer" type="HBoxContainer" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox/GoldXPContainer"]
+layout_mode = 2
+
+[node name="XPLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox/GoldXPContainer"]
+layout_mode = 2
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("10_57m1h")

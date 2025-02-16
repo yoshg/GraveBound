@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://drmovry0rk1gn"]
+
+[ext_resource type="Script" path="res://EquipmentMenu.gd" id="1_q3vmx"]
+
+[sub_resource type="Theme" id="Theme_ivpnm"]
+
+[node name="equipment_menu" type="PopupPanel"]
+size = Vector2i(143, 100)
+visible = true
+theme = SubResource("Theme_ivpnm")
+script = ExtResource("1_q3vmx")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 139.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Select equipment"
+
+[node name="ItemList" type="ItemList" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 139.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
