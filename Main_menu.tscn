@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://combat_log.gd" id="6_o5drk"]
 [ext_resource type="Script" path="res://AvatarMenu.gd" id="7_wne5q"]
 [ext_resource type="Script" path="res://EquipmentMenu.gd" id="8_d4cyh"]
-[ext_resource type="Texture2D" uid="uid://e6x0wch6tnjw" path="res://assets/character/Avatar.png" id="8_dwxjq"]
+[ext_resource type="Texture2D" uid="uid://d4idewviarqx2" path="res://assets/armor/Avatar.png" id="8_et3ww"]
 [ext_resource type="StyleBox" uid="uid://clnatw2tapb6v" path="res://assets/ButtonThemes/Main_menu.tres" id="8_ymxjg"]
 [ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
 
@@ -18,7 +18,7 @@ shadow_size = 5
 shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lxvsi"]
-texture = ExtResource("8_dwxjq")
+texture = ExtResource("8_et3ww")
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -168,13 +168,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="AvatarMenu"]
-modulate = Color(0.74902, 0.74902, 0.74902, 0.835294)
+[node name="AvatarProfile" type="Panel" parent="AvatarMenu"]
+modulate = Color(0.968627, 0.968627, 0.968627, 0.835294)
 layout_mode = 0
-offset_left = 84.0
-offset_top = 110.0
-offset_right = 244.0
-offset_bottom = 270.0
+offset_left = 52.0
+offset_top = 86.0
+offset_right = 276.0
+offset_bottom = 294.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_lxvsi")
 
 [node name="HelmetButton" type="Button" parent="AvatarMenu"]

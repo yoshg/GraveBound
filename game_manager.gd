@@ -90,6 +90,17 @@ var inventory = {
 				"strength": 1000000,
 			}
 			
+			
+			
+		},
+		
+		{
+			"name": "Water Breastplate",
+			"icon_path": "res://assets/armor/Water Breastplate.png",
+			"stats": {
+				"defense": 0,
+				"strength": 0,
+			}
 		}
 		],
 	"gloves": [],
