@@ -83,7 +83,13 @@ var inventory = {
 		],
 	"gloves": [],
 	"greaves": [],
-	"shoes": [],
+	"shoes": [
+		
+		{
+			"name": "Water Boots",
+			"icon_path": "res://assets/armor/WaterBoots.png"
+		}
+	],
 	"weapons": []
 }
 
