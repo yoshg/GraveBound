@@ -68,9 +68,38 @@ func update_items():
 		select_button.text = "Equip " + item.name
 		select_button.connect("pressed", Callable(self, "_on_item_selected").bind(item))
 		item_container.add_child(select_button)
+		
+		# **New: Add mouse hover signal to compare stats**
+		select_button.connect("mouse_entered", Callable(self, "_compare_stats").bind(item))
+		select_button.connect("mouse_exited", Callable(self, "_clear_comparison"))
 
 		grid_container.add_child(item_container)
 		
+
+func _compare_stats(new_item):
+	if not current_slot in GameManager.equipped_items:
+		return
+
+	var old_item = GameManager.equipped_items[current_slot]
+	# Ensure old_item and new_item have stats, defaulting to {"defense": 0, "strength": 0}
+	var old_stats = old_item.get("stats", {}) if old_item != null else {}
+	var new_stats = new_item.get("stats", {})
+
+	# Ensure each stat exists, defaulting to 0
+	var old_defense = old_stats.get("defense", 0)
+	var new_defense = new_stats.get("defense", 0)
+
+	var old_strength = old_stats.get("strength", 0)
+	var new_strength = new_stats.get("strength", 0)
+
+	var comparison_text = "Comparing:\n"
+	comparison_text += "Defense: " + str(old_defense) + " → " + str(new_defense) + "\n"
+	comparison_text += "Strength: " + str(old_strength) + " → " + str(new_strength)
+	
+	GameManager.emit_signal("show_comparison", comparison_text)
+
+func _clear_comparison():
+	GameManager.emit_signal("show_comparison", "")
 
 func equip_item(item):
 	if current_slot in slot_buttons:
@@ -115,12 +144,14 @@ func _on_item_selected(item: Dictionary):
 			print("Button for slot", current_slot, "not found inside AvatarMenu!")
 	else:
 		print("Main Scene or AvatarMenu Not Found!")
-
+	
+	GameManager.emit_signal("show_comparison", "")
 	hide()  # Close menu
 
 
 	
 	# Close the menu if clicking outside of it
+
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:
 		var rect = get_global_rect()

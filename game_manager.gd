@@ -4,12 +4,13 @@ extends Node
 signal hunt_reset
 signal stats_updated
 signal fight_recorded
+signal show_comparison(text)
 
 
 # Player stats
 var player_gold: int = 0
 var player_experience: int = 0
-var player_power: int = 100
+var player_strength: int = 100
 var player_defense: int = 100
 
 var enemy_images = {
@@ -31,7 +32,7 @@ func hunt() -> Dictionary:
 	var xp_drop = randi_range(5, 20)
 
 	# Combat logic
-	var enemy_defeated = player_power > enemy_defense
+	var enemy_defeated = player_strength > enemy_defense
 	var player_defeated = enemy_power > player_defense
 
 	var result = {
@@ -77,8 +78,13 @@ var inventory = {
 	],
 	"breastplate": [
 		{
-			"name": "Breast Plate",
-			"icon_path": "res://assets/armor/DragonArmor.png"
+			"name": "Dragon Breastplate",
+			"icon_path": "res://assets/armor/DragonArmor.png",
+			"stats": {
+				"defense": 1000000,
+				"strength": 1000000,
+			}
+			
 		}
 		],
 	"gloves": [],
@@ -105,11 +111,37 @@ var equipped_items = {
 
 # Function to equip an item
 func equip_item(slot: String, item: Dictionary):
-	if slot in equipped_items:
-		equipped_items[slot] = item
-		apply_item_stats()
-		emit_signal("stats_updated")
+	if not item.has("stats"):
+		print("ERROR: Item has no stats!", item)
+		return
 
+	# Unequip old item first (if any)
+	if slot in equipped_items:
+		var old_item = equipped_items[slot]
+		
+		if old_item != null and old_item.has("stats"):
+			_update_player_stats(old_item["stats"], true)
+
+	# Equip new item
+	equipped_items[slot] = item
+	_update_player_stats(item["stats"], false)
+
+	# Emit signal to update UI
+	emit_signal("stats_updated")
+	print("Equipped", item["name"], "to", slot)
+
+func _update_player_stats(stats: Dictionary, remove: bool = false):
+	var multiplier = -1 if remove else 1
+
+	if stats.has("defense"):
+		player_defense += stats["defense"] * multiplier
+	if stats.has("strength"):
+		player_strength += stats["strength"] * multiplier
+	
+
+	print("Updated stats:", "Defense:", player_defense, "Power:",)
+	
+	
 func add_item(slot: String, item_data: Dictionary):
 	if slot in inventory:
 		inventory[slot].append(item_data)
@@ -118,7 +150,7 @@ func add_item(slot: String, item_data: Dictionary):
 # Apply stat changes when equipping items
 func apply_item_stats():
 	# Reset stats to base values
-	player_power = 100
+	player_strength = 100
 	player_defense = 100
 
 	# Apply bonuses from equipped items
@@ -126,7 +158,7 @@ func apply_item_stats():
 		var item = equipped_items[slot]
 		if item:
 			if "power" in item:
-				player_power += item.power
+				player_strength += item.power
 			if "defense" in item:
 				player_defense += item.defense
 
