@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b35gdu3sam2dd"]
+[gd_scene load_steps=14 format=3 uid="uid://b35gdu3sam2dd"]
 
 [ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
 [ext_resource type="Texture2D" uid="uid://h52e0rohe6p1" path="res://assets/locations/Background.png.png" id="2_lio6s"]
@@ -8,12 +8,17 @@
 [ext_resource type="Script" path="res://combat_log.gd" id="6_o5drk"]
 [ext_resource type="Script" path="res://AvatarMenu.gd" id="7_wne5q"]
 [ext_resource type="Script" path="res://EquipmentMenu.gd" id="8_d4cyh"]
+[ext_resource type="Texture2D" uid="uid://e6x0wch6tnjw" path="res://assets/character/Avatar.png" id="8_dwxjq"]
+[ext_resource type="StyleBox" uid="uid://clnatw2tapb6v" path="res://assets/ButtonThemes/Main_menu.tres" id="8_ymxjg"]
 [ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgssb"]
 bg_color = Color(0.294118, 0.294118, 0.294118, 1)
 shadow_size = 5
 shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lxvsi"]
+texture = ExtResource("8_dwxjq")
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -163,74 +168,122 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Panel" type="Panel" parent="AvatarMenu"]
+modulate = Color(0.74902, 0.74902, 0.74902, 0.835294)
+layout_mode = 0
+offset_left = 84.0
+offset_top = 110.0
+offset_right = 244.0
+offset_bottom = 270.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_lxvsi")
+
 [node name="HelmetButton" type="Button" parent="AvatarMenu"]
 layout_mode = 2
 anchor_left = 0.366
 anchor_top = 0.037
 anchor_right = 0.607
 anchor_bottom = 0.23
-offset_left = -0.0480118
+offset_left = 3.952
 offset_top = -0.0229998
-offset_right = -0.0960236
+offset_right = 3.90399
 offset_bottom = -0.169998
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
 [node name="BreastplateButton" type="Button" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 241.0
-offset_top = 109.0
-offset_right = 305.0
-offset_bottom = 162.0
-icon_alignment = 1
-expand_icon = true
-
-[node name="GlovesButton" type="Button" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 243.0
-offset_top = 194.0
-offset_right = 312.0
-offset_bottom = 265.0
-icon_alignment = 1
-expand_icon = true
-
-[node name="GreavesButton" type="Button" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 17.0
-offset_top = 201.0
-offset_right = 77.0
-offset_bottom = 264.0
-icon_alignment = 1
-expand_icon = true
-
-[node name="ShoesButton" type="Button" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 239.0
-offset_top = 291.0
-offset_right = 302.0
-offset_bottom = 355.0
+layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = 115.952
+offset_top = 95.977
+offset_right = 115.904
+offset_bottom = 95.83
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
 [node name="WeaponButton" type="Button" parent="AvatarMenu"]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
-
-[node name="StatsBox" type="HBoxContainer" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 29.0
-offset_top = 301.0
-offset_right = 291.0
-offset_bottom = 368.0
-
-[node name="StrengthLabel" type="Label" parent="AvatarMenu/StatsBox"]
 layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = -108.048
+offset_top = 95.977
+offset_right = -108.096
+offset_bottom = 95.83
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
+icon_alignment = 1
+expand_icon = true
 
-[node name="DefenseLabel" type="Label" parent="AvatarMenu/StatsBox"]
+[node name="GlovesButton" type="Button" parent="AvatarMenu"]
 layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = -108.048
+offset_top = 199.977
+offset_right = -108.096
+offset_bottom = 199.83
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ShoesButton" type="Button" parent="AvatarMenu"]
+layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = 3.952
+offset_top = 279.977
+offset_right = 3.90399
+offset_bottom = 279.83
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
+icon_alignment = 1
+expand_icon = true
+
+[node name="GreavesButton" type="Button" parent="AvatarMenu"]
+layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = 115.952
+offset_top = 199.977
+offset_right = 115.904
+offset_bottom = 199.83
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
+theme_override_styles/hover = ExtResource("8_ymxjg")
+theme_override_styles/pressed = ExtResource("8_ymxjg")
+icon_alignment = 1
+expand_icon = true
 
 [node name="EquipmentMenu" type="Panel" parent="AvatarMenu"]
 layout_mode = 1
@@ -248,6 +301,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
+
+[node name="StatsBox" type="HBoxContainer" parent="AvatarMenu"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = -74.0
+offset_right = 274.0
+offset_bottom = -7.0
+
+[node name="StrengthLabel" type="Label" parent="AvatarMenu/StatsBox"]
+layout_mode = 2
+
+[node name="DefenseLabel" type="Label" parent="AvatarMenu/StatsBox"]
+layout_mode = 2
 
 [node name="ComparisonLabel" type="Label" parent="AvatarMenu"]
 layout_mode = 0

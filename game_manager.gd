@@ -73,6 +73,11 @@ var inventory = {
 		{
 			"name": "Bronze Helmet",
 			"icon_path": "res://assets/armor/bronzehelmet.png"
+		},
+		
+		{
+			"name": "Water Helmet",
+			"icon_path": "res://assets/armor/WaterHelmet.png"
 		}
 		
 	],
