@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dy84pghc6unmi"]
+[gd_scene load_steps=11 format=3 uid="uid://b35gdu3sam2dd"]
 
 [ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
 [ext_resource type="Texture2D" uid="uid://h52e0rohe6p1" path="res://assets/locations/Background.png.png" id="2_lio6s"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://HuntResultDisplay.gd" id="5_6acxs"]
 [ext_resource type="FontFile" uid="uid://bgfqf10ynpro1" path="res://assets/fonts/VIRUST.ttf" id="6_ndfnc"]
 [ext_resource type="Script" path="res://combat_log.gd" id="6_o5drk"]
+[ext_resource type="Script" path="res://AvatarMenu.gd" id="7_wne5q"]
+[ext_resource type="Script" path="res://EquipmentMenu.gd" id="8_d4cyh"]
 [ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgssb"]
@@ -144,6 +146,87 @@ expand_mode = 3
 [node name="Label" type="Label" parent="HUD/CombatLog/ScrollContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
+
+[node name="AvatarMenu" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 82.0
+offset_right = 388.0
+offset_bottom = 461.0
+script = ExtResource("7_wne5q")
+
+[node name="AvatarSprite" type="TextureRect" parent="AvatarMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HelmetButton" type="Button" parent="AvatarMenu"]
+layout_mode = 2
+anchor_left = 0.366
+anchor_top = 0.037
+anchor_right = 0.607
+anchor_bottom = 0.23
+offset_left = -0.0480118
+offset_top = -0.0229998
+offset_right = -0.0960236
+offset_bottom = -0.169998
+grow_horizontal = 2
+grow_vertical = 2
+icon_alignment = 1
+expand_icon = true
+
+[node name="BreastplateButton" type="Button" parent="AvatarMenu"]
+layout_mode = 0
+offset_left = 241.0
+offset_top = 109.0
+offset_right = 305.0
+offset_bottom = 162.0
+
+[node name="GlovesButton" type="Button" parent="AvatarMenu"]
+layout_mode = 0
+offset_left = 243.0
+offset_top = 194.0
+offset_right = 312.0
+offset_bottom = 265.0
+
+[node name="GreavesButton" type="Button" parent="AvatarMenu"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 201.0
+offset_right = 77.0
+offset_bottom = 264.0
+
+[node name="ShoesButton" type="Button" parent="AvatarMenu"]
+layout_mode = 0
+offset_left = 239.0
+offset_top = 291.0
+offset_right = 302.0
+offset_bottom = 355.0
+
+[node name="WeaponButton" type="Button" parent="AvatarMenu"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="EquipmentMenu" type="Panel" parent="AvatarMenu"]
+layout_mode = 1
+offset_left = 165.0
+offset_top = 5.0
+offset_right = 530.0
+offset_bottom = 365.0
+script = ExtResource("8_d4cyh")
+
+[node name="GridContainer" type="GridContainer" parent="AvatarMenu/EquipmentMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("10_57m1h")
