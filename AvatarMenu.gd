@@ -1,4 +1,3 @@
-
 extends Panel
 
 @onready var helmet_button = $HelmetButton
@@ -21,19 +20,36 @@ func _ready():
 		
 	_update_avatar_stats()  # Initialize
 	
-	helmet_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("helmet"))
-	breastplate_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("breastplate"))
-	gloves_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("gloves"))
-	greaves_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("greaves"))
-	shoes_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("shoes"))
-	weapon_button.connect("pressed", Callable(self, "_on_slot_pressed").bind("weapon"))
+	# Connect buttons for left-click (equip) and right-click (unequip)
+	helmet_button.connect("gui_input", Callable(self, "_on_slot_input").bind("helmet"))
+	breastplate_button.connect("gui_input", Callable(self, "_on_slot_input").bind("breastplate"))
+	gloves_button.connect("gui_input", Callable(self, "_on_slot_input").bind("gloves"))
+	greaves_button.connect("gui_input", Callable(self, "_on_slot_input").bind("greaves"))
+	shoes_button.connect("gui_input", Callable(self, "_on_slot_input").bind("shoes"))
+	weapon_button.connect("gui_input", Callable(self, "_on_slot_input").bind("weapon"))
+
+func _on_slot_input(event: InputEvent, slot: String):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			unequip_item(slot)
+		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			equipment_menu.show_menu(slot)
+
+func unequip_item(slot: String):
+	if GameManager.equipped_items[slot] != null:
+		GameManager.unequip_item(slot)
+
+		# Reset the button icon
+		var button = get_node(slot.capitalize() + "Button")
+		button.icon = null  # Remove the equipped item icon
+		print(slot.capitalize() + " unequipped.")
+
+		# Update stats after unequipping
+		_update_avatar_stats()
 
 func _update_avatar_stats():
 	defense_label.text = "Defense: " + str(GameManager.player_defense)
 	strength_label.text = "Strength: " + str(GameManager.player_strength)
 
-func _on_slot_pressed(slot: String):
-	equipment_menu.show_menu(slot)
-	
 func _update_comparison(text):
 	comparison_label.text = text

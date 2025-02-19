@@ -67,7 +67,11 @@ var inventory = {
 	"helmet": [
 		{
 			"name": "Iron Helmet",
-			"icon_path": "res://assets/armor/ironhelmet.png"
+			"icon_path": "res://assets/armor/ironhelmet.png",
+			"stats": {
+				"defense": 0,
+				"strength": 0,
+			}
 		},
 		
 		{
@@ -127,10 +131,6 @@ var equipped_items = {
 
 # Function to equip an item
 func equip_item(slot: String, item: Dictionary):
-	if not item.has("stats"):
-		print("ERROR: Item has no stats!", item)
-		return
-
 	# Unequip old item first (if any)
 	if slot in equipped_items:
 		var old_item = equipped_items[slot]
@@ -138,13 +138,32 @@ func equip_item(slot: String, item: Dictionary):
 		if old_item != null and old_item.has("stats"):
 			_update_player_stats(old_item["stats"], true)
 
-	# Equip new item
+	# Equip new item (even if it has no stats)
 	equipped_items[slot] = item
-	_update_player_stats(item["stats"], false)
+	
+	# Apply stats only if they exist
+	if item.has("stats"):
+		_update_player_stats(item["stats"], false)
 
 	# Emit signal to update UI
 	emit_signal("stats_updated")
-	print("Equipped", item["name"], "to", slot)
+	print("Equipped", item.get("name", "Unknown Item"), "to", slot)
+
+
+func unequip_item(slot: String):
+	if slot in equipped_items and equipped_items[slot] != null:
+		var item = equipped_items[slot]
+
+		# Reverse stat changes if the item has stats
+		if item.has("stats"):
+			_update_player_stats(item["stats"], true)
+
+		# Remove item from equipped items
+		equipped_items[slot] = null
+
+		emit_signal("stats_updated")
+		print("Unequipped", item.get("name", "Unknown Item"), "from", slot)
+
 
 func _update_player_stats(stats: Dictionary, remove: bool = false):
 	var multiplier = -1 if remove else 1
