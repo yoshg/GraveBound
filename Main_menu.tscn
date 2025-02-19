@@ -79,7 +79,7 @@ text = "Hunt"
 script = ExtResource("3_wxwgq")
 
 [node name="HuntCooldownTimer" type="Timer" parent="HUD/MainHbox/HuntButton"]
-wait_time = 1.681
+wait_time = 5.0
 one_shot = true
 
 [node name="HuntResultDisplay" type="Panel" parent="HUD"]
@@ -118,6 +118,14 @@ layout_mode = 2
 
 [node name="XPLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox/GoldXPContainer"]
 layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="HUD/HuntResultDisplay"]
+layout_mode = 0
+offset_left = 199.0
+offset_top = 1.0
+offset_right = 249.0
+offset_bottom = 32.0
+text = "X"
 
 [node name="CombatLog" type="Panel" parent="HUD"]
 layout_mode = 0
@@ -189,9 +197,10 @@ offset_right = 3.90399
 offset_bottom = -0.169998
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
+mouse_force_pass_scroll_events = false
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -207,9 +216,9 @@ offset_right = 115.904
 offset_bottom = 95.83
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -225,9 +234,9 @@ offset_right = -108.096
 offset_bottom = 95.83
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -243,9 +252,9 @@ offset_right = -108.096
 offset_bottom = 199.83
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -261,9 +270,9 @@ offset_right = 3.90399
 offset_bottom = 279.83
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -279,9 +288,9 @@ offset_right = 115.904
 offset_bottom = 199.83
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
+theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -324,3 +333,5 @@ offset_bottom = 237.0
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("10_57m1h")
+
+[connection signal="pressed" from="HUD/HuntResultDisplay/CloseButton" to="HUD/HuntResultDisplay" method="_on_close_button_pressed"]
