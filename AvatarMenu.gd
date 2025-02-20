@@ -64,21 +64,16 @@ func unequip_item(slot: String):
 
 
 func _update_avatar_stats():
-	# Debugging: Check GameManager's equipped items
-	print_debug("Current Equipped Items:", GameManager.equipped_items)
+	# ✅ Get new combat values
+	var attack_power = int(GameManager.calculate_base_attack())  # Ensure integer
+	var flat_defense = int(GameManager.calculate_total_flat_defense())  # Ensure integer
 
-	# Update numerical stats
-	defense_label.text = "Defense: " + str(GameManager.player_defense)
-	strength_label.text = "Strength: " + str(GameManager.player_strength)
+	# ✅ Update labels with new stats
+	defense_label.text = "Defense: " + str(flat_defense)
+	strength_label.text = "Power: " + str(attack_power)
 
-	# Update the UI for equipped items
-	for slot in ["helmet", "breastplate", "gloves", "greaves", "shoes", "weapon"]:
-		var button = get_node(slot.capitalize() + "Button")
-		if GameManager.equipped_items.has(slot) and GameManager.equipped_items[slot] != null:
-			var item = GameManager.equipped_items[slot]
-			button.icon = load(item["icon_path"])
-		else:
-			button.icon = null
+	# ✅ Debugging: Ensure values are correctly fetched
+	print_debug("Updated Avatar Stats - Attack Power:", attack_power, "Flat Defense:", flat_defense)
 
 func _update_comparison(text):
 	comparison_label.text = text

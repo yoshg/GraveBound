@@ -307,6 +307,32 @@ func change_location(new_location: String):
 	else:
 		print("Invalid location:", new_location)
 
+func calculate_base_attack() -> float:
+	# Get the equipped weapon
+	var weapon = equipped_items.get("weapon", null)
+
+	if weapon == null:
+		print_debug("No weapon equipped! Returning 0 attack.")
+		return 0  # No weapon equipped
+
+	# ✅ Collect attack values
+	var attack_values = []
+	for attack_type in weapon.attack.keys():
+		attack_values.append(weapon.attack[attack_type])
+
+	# ✅ Calculate average
+	if attack_values.size() == 0:
+		print_debug("Weapon has no valid attack types! Returning 0 attack.")
+		return 0
+
+	var avg_attack = float(attack_values.reduce(func(a, b): return a + b, 0)) / attack_values.size()
+
+	# ✅ Debugging logs
+	print_debug("Base Attack Power (Average):", avg_attack)
+
+	return avg_attack
+
+
 func calculate_effective_attack() -> float:
 	# Get the equipped weapon from equipped_items dictionary
 	var weapon = equipped_items.get("weapon", null)
@@ -381,3 +407,16 @@ func calculate_effective_enemy_power() -> float:
 
 	return max(0, enemy_power)
 
+func calculate_total_flat_defense() -> int:
+	var total_flat_defense = 0
+
+	# ✅ Loop through equipped armor and sum flat defense
+	for slot in ["helmet", "breastplate", "gloves", "greaves", "shoes"]:
+		var item = equipped_items.get(slot, null)
+		if item and item.has("stats") and item["stats"].has("flat_defense"):
+			total_flat_defense += item["stats"]["flat_defense"]
+
+	# ✅ Debugging: Ensure correct calculations
+	print_debug("Total Flat Defense:", total_flat_defense)
+
+	return total_flat_defense
