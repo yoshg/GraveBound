@@ -1,6 +1,7 @@
 extends Panel
 
 @onready var grid_container = $GridContainer
+@onready var avatar_menu = get_node("/root/Main/AvatarMenu")
 var slot_buttons = {}  # Store slot buttons dynamically
 var current_slot = ""
 
@@ -27,20 +28,32 @@ func show_menu(slot: String):
 	print("Equipment menu opened for:", slot)
 	current_slot = slot
 	print("Current slot set to:", current_slot)
+	
 	update_items()
-	show()
+	show() 
 
 func update_items():
 	# Clear previous items
 	for child in grid_container.get_children():
 		grid_container.remove_child(child)
 		child.queue_free()
+		
+		
+		# ✅ Debugging: Print the full inventory structure
+	print_debug("Full Inventory Data:", GameManager.inventory)
 
 	# Get items from inventory
 	var items = GameManager.inventory.get(current_slot, [])
-	print("Updating items for slot:", current_slot, "Items:", items)
+	print_debug("Updating items for slot:", current_slot)
+	
+
+	# If no items found, print a warning
+	if items.size() == 0:
+		print_debug("WARNING: No items found for slot:", current_slot)
 
 	for item in items:
+		print_debug("Processing Item:", item["name"])  # ✅ Debugging
+
 		var item_container = HBoxContainer.new()  # Holds both sprite & button
 		item_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
@@ -56,16 +69,16 @@ func update_items():
 		# Load texture correctly
 		if item.has("icon_path"):
 			texture_rect.texture = load(item["icon_path"])
-			print("Setting icon for item:", item.name, "in slot:", current_slot)
+			print_debug("Setting icon for item:", item["name"], "in slot:", current_slot)
 		else:
-			print("WARNING: Item", item.name, "has no 'icon_path'!")
+			print_debug("WARNING: Item", item["name"], "has no 'icon_path'!")
 
 		icon_container.add_child(texture_rect)
 		item_container.add_child(icon_container)
 
 		# **Make the item selectable**
 		var select_button = Button.new()
-		select_button.text = "Equip " + item.name
+		select_button.text = "Equip " + item["name"]
 		select_button.connect("pressed", Callable(self, "_on_item_selected").bind(item))
 		item_container.add_child(select_button)
 		
@@ -74,7 +87,6 @@ func update_items():
 		select_button.connect("mouse_exited", Callable(self, "_clear_comparison"))
 
 		grid_container.add_child(item_container)
-		
 
 func _compare_stats(new_item):
 	if not current_slot in GameManager.equipped_items:
@@ -102,15 +114,32 @@ func _clear_comparison():
 	GameManager.emit_signal("show_comparison", "")
 
 func equip_item(item):
-	if current_slot in slot_buttons:
-		var button = slot_buttons[current_slot]
-		if item.has("icon_path"):
-			button.icon = load(item["icon_path"])  # Load from path
-			print("Equipped", item.name, "to", current_slot)
-		else:
-			print("ERROR: No 'icon_path' found in item:", item)
-	else:
-		print("ERROR: No button found for slot", current_slot)
+	print_debug("Equipping:", item["name"], "to slot:", current_slot)
+
+	# Store in GameManager
+	GameManager.equipped_items[current_slot] = {
+		"name": item.get("name", ""),
+		"icon_path": item.get("icon_path", ""),
+		"flat_defense": item.get("stats", {}).get("flat_defense", 0),
+		"resistances": item.get("stats", {}).get("resistances", {})
+	}
+
+	# Apply the item's defense and resistances
+	GameManager.player_defense += GameManager.equipped_items[current_slot]["flat_defense"]
+
+	# Debugging: Check if defense is applied correctly
+	print_debug("Updated Defense:", GameManager.player_defense)
+
+	if GameManager.equipped_items[current_slot].has("resistances"):
+		for attack_type in GameManager.equipped_items[current_slot]["resistances"]:
+			GameManager.player_resistances[attack_type] += GameManager.equipped_items[current_slot]["resistances"][attack_type]
+
+	# Update Avatar UI
+	avatar_menu._update_avatar_stats()
+
+	# Close EquipmentMenu after equipping
+	avatar_menu.close_menu()
+
 
 func _on_item_selected(item: Dictionary):
 	GameManager.equip_item(current_slot, item)  # Equip the item

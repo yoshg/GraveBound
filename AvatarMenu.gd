@@ -34,23 +34,51 @@ func _on_slot_input(event: InputEvent, slot: String):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			unequip_item(slot)
 		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			print_debug("Opening Equipment Menu for:", slot)  # ✅ Debugging
 			equipment_menu.show_menu(slot)
 
 func unequip_item(slot: String):
-	if GameManager.equipped_items[slot] != null:
-		GameManager.unequip_item(slot)
+	if GameManager.equipped_items.has(slot) and GameManager.equipped_items[slot] != null:
+		var unequipped_item = GameManager.equipped_items[slot]
+		print_debug("Unequipping:", unequipped_item["name"], "from slot:", slot)
+
+		# Remove item from equipped_items
+		GameManager.equipped_items.erase(slot)
+
+		# Remove its stats from player stats
+		GameManager.player_defense -= unequipped_item.get("flat_defense", 0)
+		
+		# Remove resistances
+		if unequipped_item.has("resistances"):
+			for attack_type in unequipped_item["resistances"]:
+				GameManager.player_resistances[attack_type] -= unequipped_item["resistances"][attack_type]
 
 		# Reset the button icon
 		var button = get_node(slot.capitalize() + "Button")
-		button.icon = null  # Remove the equipped item icon
-		print(slot.capitalize() + " unequipped.")
+		button.icon = null
 
-		# Update stats after unequipping
-		_update_avatar_stats()
+		# Emit signal to update stats
+		GameManager.emit_signal("stats_updated")
+
+		print_debug(slot.capitalize() + " unequipped.")
+
 
 func _update_avatar_stats():
+	# Debugging: Check GameManager's equipped items
+	print_debug("Current Equipped Items:", GameManager.equipped_items)
+
+	# Update numerical stats
 	defense_label.text = "Defense: " + str(GameManager.player_defense)
 	strength_label.text = "Strength: " + str(GameManager.player_strength)
+
+	# Update the UI for equipped items
+	for slot in ["helmet", "breastplate", "gloves", "greaves", "shoes", "weapon"]:
+		var button = get_node(slot.capitalize() + "Button")
+		if GameManager.equipped_items.has(slot) and GameManager.equipped_items[slot] != null:
+			var item = GameManager.equipped_items[slot]
+			button.icon = load(item["icon_path"])
+		else:
+			button.icon = null
 
 func _update_comparison(text):
 	comparison_label.text = text
