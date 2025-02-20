@@ -35,66 +35,51 @@ func hunt() -> Dictionary:
 
 	current_enemy = enemy_data  # Store the enemy for combat calculations
 
-	# Debugging
-	print_debug("Fighting:", current_enemy.name)
-	print_debug("Base Enemy Power:", current_enemy.base_power)
-
-	# Get player attack and enemy power
+	# ✅ Use fixed enemy power
 	var attack_power = calculate_effective_attack()
-	var enemy_power = max(0, calculate_effective_enemy_power())  # ✅ Force 0 instead of 1
+	var enemy_power = max(0, current_enemy.base_power)  # Use predefined power
 
+	# ✅ Calculate win probability
+	var alpha = 0.5
+	var win_probability = pow(attack_power, alpha) / (pow(attack_power, alpha) + pow(enemy_power, alpha))
+	win_probability = clamp(win_probability, 0.0, 1.0)  # Ensure valid range
 
-	# Debugging attack vs enemy power
+	# ✅ Single roll for outcome (no ties)
+	var roll = randf()
+	var enemy_defeated = roll < win_probability
+	var player_defeated = not enemy_defeated
+
+	# ✅ Debugging battle results
 	print_debug("Effective Attack Power:", attack_power)
 	print_debug("Effective Enemy Power:", enemy_power)
-
-	# ✅ Fix: Ensure if enemy power is 0, player automatically wins
-	var enemy_defeated = false
-	var player_defeated = false
-
-	if enemy_power == 0:
-		print_debug("Enemy has 0 power. Auto win!")
-		enemy_defeated = true
-		player_defeated = false
-	else:
-		# Win probability calculation
-		var alpha = 0.5
-		var win_probability = pow(attack_power, alpha) / (pow(attack_power, alpha) + pow(enemy_power, alpha))
-
-		# Roll for win
-		enemy_defeated = randf() < win_probability
-		player_defeated = randf() < (enemy_power / (enemy_power + attack_power))
-
-	# Debug battle result
+	print_debug("Win Probability: %.2f%%" % (win_probability * 100))  # Show as percentage
+	print_debug("Rolled Value:", roll)
 	print_debug("Enemy Defeated:", enemy_defeated)
 	print_debug("Player Defeated:", player_defeated)
 
 	# Loot
-	var gold_drop = randi_range(10, 50)  # Adjust for better balancing
+	var gold_drop = randi_range(10, 50)
 	var xp_drop = randi_range(5, 20)
-
-	# Roll for loot if enemy is defeated
 	var loot_drops = []
 	if enemy_defeated and current_enemy.has("loot_table"):
 		loot_drops = current_enemy.loot_table.roll_loot()
 
 	# Apply rewards if player wins
-	if enemy_defeated and not player_defeated:
+	if enemy_defeated:
 		player_gold += gold_drop
 		player_experience += xp_drop
 		emit_signal("stats_updated")
 
 	# Store fight results
-	# ✅ Directly return the results so we don’t calculate win probability
 	var result = {
 		"enemy_name": current_enemy.name,
 		"enemy_power": enemy_power,
 		"enemy_defense": current_enemy.base_power,
 		"enemy_defeated": enemy_defeated,
 		"player_defeated": player_defeated,
-		"gold_drop": randi_range(10, 50),
-		"xp_drop": randi_range(5, 20),
-		"loot": []
+		"gold_drop": gold_drop,
+		"xp_drop": xp_drop,
+		"loot": loot_drops
 	}
 
 	# Emit fight result signal
@@ -102,6 +87,8 @@ func hunt() -> Dictionary:
 	print("Fight recorded signal emitted")
 
 	return result
+
+
 
 func get_random_enemy() -> Dictionary:
 	var enemies = {
@@ -148,7 +135,6 @@ var inventory = {
 			"name": "Bronze Helmet",
 			"icon_path": "res://assets/armor/bronzehelmet.png",
 			"stats": {
-				"flat_defense": 10,
 				"resistances": { "Blunt": 0.15, "Pierce": 0.05 }
 			}
 		},
@@ -205,12 +191,27 @@ var inventory = {
 			"attack": {  # ✅ INSANE ATTACK POWER
 				"Slash": 1000000,
 				"Pierce": 500000,
-				"Blunt": 250000
+				"Blunt": 2050000
 		},
 			"armor_pierce": {  # ✅ DESTROYS ENEMY RESISTANCES
 				"Slash": 1.0,
 				"Pierce": 1.0,
 				"Blunt": 1.0
+			}
+		},
+		
+		{
+			"name": "Iron Sword",
+			"icon_path": "res://assets/weapons/ironsword.png",
+			"attack": {  
+				"Slash": 10,
+				"Pierce": 5,
+				"Blunt": 2
+		},
+			"armor_pierce": {  
+				"Slash": .3,
+				"Pierce": .1,
+				"Blunt": .0
 			}
 		}
 	]

@@ -16,39 +16,34 @@ func _ready():
 	# Set custom colors
 
 func show_result(result: Dictionary) -> void:
-	if GameManager.current_enemy == null:
-		print_debug("Error: No current_enemy set in GameManager!")
-		return
-	
-	# Update labels using current_enemy
-	enemy_label.text = "Encountered: " + GameManager.current_enemy.name
-	stats_label.text = "%s Power: %d | Defense: %d" % [
-		GameManager.current_enemy.name,
-		GameManager.current_enemy.base_power,
-		GameManager.current_enemy.base_power
-	]
+	enemy_label.text = "Encountered: " + result.enemy_name
+	stats_label.text = "%s Power: %d | Defense: %d" % [result.enemy_name, result.enemy_power, result.enemy_defense]
 
-	# Determine battle outcome text
-	var outcome_text = "The battle was inconclusive."
-	if result.enemy_power == 0 or (result.enemy_defeated and not result.player_defeated):
-		outcome_text = "Victory! Gained %d Gold and %d XP" % [result.gold_drop, result.xp_drop]
+	if result.enemy_defeated and not result.player_defeated:
+			rewards_label.text = "Victory! Gained %d Gold and %d XP" % [result.gold_drop, result.xp_drop]
 	elif result.player_defeated and not result.enemy_defeated:
-		outcome_text = "Defeat! You were overwhelmed."
+		rewards_label.text = "Defeat! You were overwhelmed."
 	elif result.enemy_defeated and result.player_defeated:
-		outcome_text = "Both perished in battle..."
+			rewards_label.text = "Both perished in battle..."
+	else:
+		rewards_label.text = "The battle was inconclusive."
 
-	# Update rewards
-	rewards_label.text = outcome_text
-
-	# Set the enemy graphic
-	enemy_graphic.texture = GameManager.enemy_images.get(GameManager.current_enemy.name, null)
-	enemy_graphic.visible = enemy_graphic.texture != null
+	show()  # Make sure the result panel is visible
+	enemy_graphic.texture = null
 	
-	show()
-
+	# Set the enemy graphic (assuming GameManager has the enemy_images dictionary)
+	if result.enemy_name in GameManager.enemy_images:
+		enemy_graphic.texture = GameManager.enemy_images[result.enemy_name]
+		enemy_graphic.show()
+	else:
+		enemy_graphic.texture = null
 
 func _on_hunt_reset() -> void:
 	hide()  # Hides the panel instead of deleting it
 	
+func _on_close_pressed() -> void:
+	hide()  # Allows the player to close it manually
+
+
 func _on_close_button_pressed() -> void:
 	hide()
