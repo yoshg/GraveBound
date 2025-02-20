@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjddsurgpanc4"
-path="res://.godot/imported/menu background.webp-e332e63e20f4cc9e91d66ff7d4cce1e1.ctex"
+uid="uid://d2cnvt2yl06ry"
+path="res://.godot/imported/cave_entrance.png-c23226b31a20d9b46114451d47be463f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/locations/menu background.webp"
-dest_files=["res://.godot/imported/menu background.webp-e332e63e20f4cc9e91d66ff7d4cce1e1.ctex"]
+source_file="res://assets/backgrounds/cave_entrance.png"
+dest_files=["res://.godot/imported/cave_entrance.png-c23226b31a20d9b46114451d47be463f.ctex"]
 
 [params]
 

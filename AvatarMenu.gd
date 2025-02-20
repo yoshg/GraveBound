@@ -12,6 +12,7 @@ extends Panel
 @onready var comparison_label = $ComparisonLabel
 
 func _ready():
+	
 	if GameManager:
 		GameManager.connect("stats_updated", Callable(self, "_update_avatar_stats"))
 		GameManager.connect("show_comparison", Callable(self, "_update_comparison"))

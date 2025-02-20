@@ -1,6 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://b35gdu3sam2dd"]
 
 [ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
+[ext_resource type="Texture2D" uid="uid://h52e0rohe6p1" path="res://assets/backgrounds/mayflower.png" id="2_lio6s"]
 [ext_resource type="Script" path="res://HuntButton.gd" id="3_wxwgq"]
 [ext_resource type="Script" path="res://HuntResultDisplay.gd" id="5_6acxs"]
 [ext_resource type="FontFile" uid="uid://bgfqf10ynpro1" path="res://assets/fonts/VIRUST.ttf" id="6_ndfnc"]
@@ -10,9 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://d4idewviarqx2" path="res://assets/armor/Avatar.png" id="8_et3ww"]
 [ext_resource type="StyleBox" uid="uid://clnatw2tapb6v" path="res://assets/ButtonThemes/Main_menu.tres" id="8_ymxjg"]
 [ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7qf2c"]
-bg_color = Color(0, 0, 0, 0.737255)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgssb"]
 bg_color = Color(0.294118, 0.294118, 0.294118, 1)
@@ -47,14 +45,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_lio6s")
+expand_mode = 3
 
 [node name="TravelButton" type="Button" parent="HUD"]
-layout_mode = 2
-offset_left = 39.0
-offset_top = 20.0
-offset_right = 160.0
+layout_mode = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 127.0
 offset_bottom = 66.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_7qf2c")
 text = "Travel"
 
 [node name="MainHbox" type="HBoxContainer" parent="HUD"]
@@ -172,10 +171,8 @@ size_flags_horizontal = 8
 [node name="TravelMenu" type="PopupPanel" parent="HUD"]
 
 [node name="Panel" type="Panel" parent="HUD/TravelMenu"]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 96.0
-offset_bottom = 96.0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HUD/TravelMenu/Panel"]
 layout_mode = 0

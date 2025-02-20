@@ -5,6 +5,7 @@ signal hunt_reset
 signal stats_updated
 signal fight_recorded
 signal show_comparison(text)
+signal location_changed  # Added new signal
 
 
 # Player stats
@@ -12,6 +13,7 @@ var player_gold: int = 0
 var player_experience: int = 0
 var player_strength: int = 100
 var player_defense: int = 100
+var current_location = "Mayflower"
 
 var enemy_images = {
 	"Goblin": preload("res://images/goblin.png"),
@@ -198,3 +200,11 @@ func apply_item_stats():
 				player_defense += item.defense
 
 	emit_signal("stats_updated")
+
+func change_location(new_location: String):
+	if new_location in ["Mayflower", "Cave Entrance"]:  # Ensure location is valid
+		current_location = new_location
+		print("Traveled to:", current_location)
+		emit_signal("location_changed", current_location)  # Notify HUD
+	else:
+		print("Invalid location:", new_location)
