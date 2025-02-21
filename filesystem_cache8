@@ -1,0 +1,72 @@
+2a60927148abd1d33b818b535e306557
+::res://::1740163195
+AvatarMenu.gd::GDScript::-1::1740162315::0::1::::<>Panel<>::
+combat_log.gd::GDScript::-1::1740157633::0::1::::<>Panel<>::
+EquipmentMenu.gd::GDScript::-1::1740161679::0::1::::<>Panel<>::
+EquipmentMenu.tscn::PackedScene::8378133396676589377::1740140285::0::1::::<><>::res://EquipmentMenu.gd
+game_manager.gd::GDScript::-1::1740163113::0::1::::<>Node<>::
+HUD.gd::GDScript::-1::1740161679::0::1::::<>Control<>::
+HuntButton.gd::GDScript::-1::1740140285::0::1::::<>Button<>::
+HuntResultDisplay.gd::GDScript::-1::1740157040::0::1::::<>Panel<>::
+icon.svg::CompressedTexture2D::6148224849050498401::1740140286::1740140330::1::::<><>::
+LootTable.gd::GDScript::-1::1740140285::0::1::::LootTable<>Node<>::
+Main_menu.gd::GDScript::-1::1740153309::0::1::::<>RefCounted<>::
+Main_menu.tscn::PackedScene::4414010392057981685::1740163147::0::1::::<><>::res://HUD.gd<>res://HuntButton.gd<>res://HuntResultDisplay.gd<>res://Shop.gd<>uid://bgfqf10ynpro1<>res://combat_log.gd<>res://AvatarMenu.gd<>res://EquipmentMenu.gd<>uid://d4idewviarqx2<>uid://clnatw2tapb6v<>res://game_manager.gd
+popup_panel.tscn::PackedScene::2091452099388158346::1740140286::0::1::::<><>::
+README.md::TextFile::-1::1740140285::0::1::::<><>::
+Shop.gd::GDScript::-1::1740163147::0::1::::<>Panel<>::
+::res://assets/::1740140296
+::res://assets/armor/::1740140332
+9F0CF3A3-1CBA-4E9B-BC03-2A8D45408B5F.png::CompressedTexture2D::1597459031759676434::1740140286::1740140331::1::::<><>::
+Avatar.png::CompressedTexture2D::9211444021087406257::1740140286::1740140331::1::::<><>::
+Breastplate.webp::CompressedTexture2D::534744878291909634::1740140286::1740140331::1::::<><>::
+bronzehelmet.png::CompressedTexture2D::851027269673850532::1740140289::1740140332::1::::<><>::
+DarkKnightBreastplate.png::CompressedTexture2D::5335404268207601459::1740140288::1740140332::1::::<><>::
+DarkKnightHelmet.png::CompressedTexture2D::3016578211013295378::1740140289::1740140332::1::::<><>::
+DragonArmor.png::CompressedTexture2D::319726097961249279::1740140289::1740140332::1::::<><>::
+ezgif-16f2c4efdc326.png::CompressedTexture2D::8189853818005811769::1740140290::1740140332::1::::<><>::
+ezgif-17fb7d3bb73cb5.png::CompressedTexture2D::2253420199267873252::1740140290::1740140332::1::::<><>::
+ForestPotion.png::CompressedTexture2D::6787875655103901777::1740140289::1740140332::1::::<><>::
+ironhelmet.png::CompressedTexture2D::4266062314629103217::1740140290::1740140332::1::::<><>::
+Water boots.webp::CompressedTexture2D::9035755246069624983::1740140289::1740140332::1::::<><>::
+Water Breastplate.png::CompressedTexture2D::1442797712650242133::1740140289::1740140332::1::::<><>::
+WaterBoots.png::CompressedTexture2D::4307947733607695258::1740140289::1740140332::1::::<><>::
+WaterHelmet.png::CompressedTexture2D::4490234330284524836::1740140289::1740140332::1::::<><>::
+::res://assets/backgrounds/::1740140332
+Background.png.png::CompressedTexture2D::554901080059406628::1740140290::1740140332::1::::<><>::
+cave_entrance.png::CompressedTexture2D::9059317448151804814::1740140290::1740140332::1::::<><>::
+mayflower.png::CompressedTexture2D::554901080059406628::1740140290::1740140332::1::::<><>::
+menu background.webp::CompressedTexture2D::3024528781987510021::1740140291::1740140332::1::::<><>::
+::res://assets/ButtonThemes/::1740140286
+Main_menu.tres::StyleBoxFlat::5571790686378815695::1740140286::0::1::::<><>::
+::res://assets/character/::1740140333
+angel 2.webp::CompressedTexture2D::7656608702427742812::1740140294::1740140332::1::::<><>::
+angel 3.webp::CompressedTexture2D::8481164374823940058::1740140294::1740140332::1::::<><>::
+angel.webp::CompressedTexture2D::1761746952627611874::1740140295::1740140332::1::::<><>::
+Avatar.png::CompressedTexture2D::346193379572782180::1740140291::1740140331::1::::<><>::
+bug.webp::CompressedTexture2D::2531339223095728031::1740140295::1740140331::1::::<><>::
+ghost sprite.webp::CompressedTexture2D::1086309474869767648::1740140295::1740140331::1::::<><>::
+gold talisman.webp::CompressedTexture2D::2676172566742647816::1740140295::1740140331::1::::<><>::
+gorgon.webp::CompressedTexture2D::4159646839216224346::1740140295::1740140331::1::::<><>::
+Lava Monster.webp::CompressedTexture2D::3527659942808892733::1740140294::1740140331::1::::<><>::
+profile.PNG::CompressedTexture2D::8099297515240240989::1740140295::1740140331::1::::<><>::
+silver talisman.webp::CompressedTexture2D::4036169227473910783::1740140295::1740140331::1::::<><>::
+skull talisman.webp::CompressedTexture2D::8890909526568966062::1740140296::1740140331::1::::<><>::
+summoning horn2.webp::CompressedTexture2D::1220447631415032142::1740140296::1740140331::1::::<><>::
+summoning horn.webp::CompressedTexture2D::2060648878872283980::1740140296::1740140331::1::::<><>::
+::res://assets/fonts/::1740140330
+VIRUST.ttf::FontFile::2818857440481028546::1740140296::1740140330::1::::<><>::
+::res://assets/helmets/::1740140331
+helmet.webp::CompressedTexture2D::5623900248115498882::1740140296::1740140331::1::::<><>::
+::res://assets/weapons/::1740140331
+godsword.png::CompressedTexture2D::1131238158759046559::1740140296::1740140331::1::::<><>::
+ironsword.png::CompressedTexture2D::6203236783937733378::1740140296::1740140331::1::::<><>::
+sword.webp::CompressedTexture2D::702988579207560751::1740140297::1740140331::1::::<><>::
+::res://images/::1740153807
+bandit.png::CompressedTexture2D::1208475839548465111::1740140297::1740140331::1::::<><>::
+dark_knight.png::CompressedTexture2D::7009577975359192259::1740140297::1740140331::1::::<><>::
+goblin.png::CompressedTexture2D::8720402770726614550::1740140297::1740140331::1::::<><>::
+orc.png::CompressedTexture2D::2201757128083670928::1740140297::1740140331::1::::<><>::
+ruffian.png::CompressedTexture2D::8892255120166720065::1740153761::1740153807::1::::<><>::
+thief.png::CompressedTexture2D::1972148542584743103::1740153759::1740153807::1::::<><>::
+wolf.png::CompressedTexture2D::5658391657365966518::1740140297::1740140331::1::::<><>::
