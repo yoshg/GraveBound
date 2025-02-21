@@ -11,7 +11,7 @@ const LootTable = preload("res://LootTable.gd")  # Update with the correct path
 
 
 # Player stats
-var player_gold: int = 0
+var player_gold: int = 10000000
 var player_experience: int = 0
 var player_strength: int = 100
 var player_defense: int = 100
@@ -23,17 +23,34 @@ var enemy_images = {
 	"Orc": preload("res://images/orc.png"),
 	"Bandit": preload("res://images/bandit.png"),
 	"Wolf": preload("res://images/wolf.png"),
-	"Dark Knight": preload("res://images/dark_knight.png")
+	"Dark Knight": preload("res://images/dark_knight.png"),
+	"Ruffian": preload("res://images/ruffian.png"),
+	"Thief": preload("res://images/thief.png")
 }
 
 func hunt() -> Dictionary:
 	# Generate a random enemy
 	var enemy_data = get_random_enemy()
-	if enemy_data.is_empty():
-		print_debug("Error: No enemy found!")
-		return {}
+	print("Selected enemy:", enemy_data)  # Debug output
 
+	if enemy_data.is_empty() or not enemy_data.has("name"):
+		print_debug("Error: No valid enemy found!")
+		return {
+			"enemy_name": "Unknown Enemy",
+			"enemy_power": 0,
+			"enemy_defense": 0,
+			"enemy_defeated": false,
+			"player_defeated": false,
+			"gold_drop": 0,
+			"xp_drop": 0,
+			"loot": []
+		}
 	current_enemy = enemy_data  # Store the enemy for combat calculations
+	
+	# Ensure `current_enemy` has a `name`
+	if not current_enemy.has("name"):
+		print_debug("Error: Current enemy is missing 'name':", current_enemy)
+		return {}
 
 	# ✅ Use fixed enemy power
 	var attack_power = calculate_effective_attack()
@@ -91,6 +108,8 @@ func hunt() -> Dictionary:
 
 
 func get_random_enemy() -> Dictionary:
+	print_debug("Current location in get_random_enemy():", current_location)
+	
 	var enemies = {
 		"Mayflower": [
 			{"name": "Thief", "base_power": 50, "resistances": {"Slash": 1.0, "Blunt": 1.2}, "loot_table": LootTable.new({"Gold Pouch": {"chance": 0.5, "rarity": "Common"}})},
@@ -103,14 +122,25 @@ func get_random_enemy() -> Dictionary:
 	}
 
 	# Get enemies based on current location
-	var enemy_list = enemies.get(current_location, [])
-	if enemy_list.size() == 0:
-		print_debug("No enemies found for location: ", current_location)
+	if not enemies.has(current_location):
+		print_debug("Error: Location not found in enemy list:", current_location)
 		return {}
 
-	# Pick a random enemy from the list
-	return enemy_list[randi() % enemy_list.size()]
+	var enemy_list = enemies[current_location]
+	if enemy_list.is_empty():
+		print_debug("Error: No enemies found for location:", current_location)
+		return {}
 
+	# Pick a random enemy from the list and ensure it's valid
+	var selected_enemy = enemy_list[randi() % enemy_list.size()]
+	if not "name" in selected_enemy:
+		print_debug("Error: Enemy data missing 'name':", selected_enemy)
+		return {}
+	
+	print_debug("Fetching enemy list for:", current_location)
+	print_debug("Enemy list contains:", enemy_list)
+
+	return selected_enemy
 
 func get_random_enemy_name() -> String:
 	var enemy_list = ["Goblin", "Orc", "Bandit", "Wolf", "Dark Knight"]
@@ -169,9 +199,9 @@ var inventory = {
 		}
 	],
 
-	"gloves": [],
+	"charms": [],
 
-	"greaves": [],
+	"greases": [],
 
 	"shoes": [
 		{
@@ -277,11 +307,6 @@ func _update_player_stats(stats: Dictionary, remove: bool = false):
 
 	print("Updated stats:", "Defense:", player_defense, "Power:",)
 	
-	
-func add_item(slot: String, item_data: Dictionary):
-	if slot in inventory:
-		inventory[slot].append(item_data)
-		print(item_data.name + " added to inventory!")
 
 # Apply stat changes when equipping items
 func apply_item_stats():
@@ -301,7 +326,7 @@ func apply_item_stats():
 	emit_signal("stats_updated")
 
 func change_location(new_location: String):
-	if new_location in ["Mayflower", "Cave Entrance"]:  # Ensure location is valid
+	if new_location in ["Mayflower", "Cave"]:  # Ensure location is valid
 		current_location = new_location
 		print("Traveled to:", current_location)
 		emit_signal("location_changed", current_location)  # Notify HUD
@@ -421,3 +446,35 @@ func calculate_total_flat_defense() -> int:
 	print_debug("Total Flat Defense:", total_flat_defense)
 
 	return total_flat_defense
+
+# Function to add an item to inventory
+func add_item(slot: String, item_data: Dictionary):
+	if slot in inventory:
+		# Prevent duplicate purchases for non-stackable items
+		for existing_item in inventory[slot]:
+			if existing_item.name == item_data.name:
+				print("Already own:", item_data.name)
+				return  # Stop duplicate purchases
+
+		# Add item to inventory dynamically
+		inventory[slot].append(item_data)
+		print(item_data.name + " added to inventory!")
+
+		emit_signal("stats_updated")  # Update inventory UI
+
+
+# Function to remove an item from inventory
+func remove_item(slot: String, item_name: String):
+	if slot in inventory:
+		for i in range(inventory[slot].size()):
+			var item = inventory[slot][i]
+			if item.name == item_name:
+				if "quantity" in item and item.quantity > 1:
+					item.quantity -= 1  # Reduce stack size
+					print(item_name + " quantity decreased!")
+				else:
+					inventory[slot].remove_at(i)  # Remove item completely
+					print(item_name + " removed from inventory!")
+				return
+	print("Item not found:", item_name)
+

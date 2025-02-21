@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://b35gdu3sam2dd"]
+[gd_scene load_steps=16 format=3 uid="uid://b35gdu3sam2dd"]
 
 [ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
 [ext_resource type="Script" path="res://HuntButton.gd" id="3_wxwgq"]
 [ext_resource type="Script" path="res://HuntResultDisplay.gd" id="5_6acxs"]
+[ext_resource type="Script" path="res://Shop.gd" id="6_gbdq2"]
 [ext_resource type="FontFile" uid="uid://bgfqf10ynpro1" path="res://assets/fonts/VIRUST.ttf" id="6_ndfnc"]
 [ext_resource type="Script" path="res://combat_log.gd" id="6_o5drk"]
 [ext_resource type="Script" path="res://AvatarMenu.gd" id="7_wne5q"]
@@ -13,6 +14,9 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7qf2c"]
 bg_color = Color(0, 0, 0, 0.737255)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wrgfk"]
+bg_color = Color(0, 0, 0, 0.741176)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgssb"]
 bg_color = Color(0.294118, 0.294118, 0.294118, 1)
@@ -56,6 +60,15 @@ offset_right = 160.0
 offset_bottom = 66.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_7qf2c")
 text = "Travel"
+
+[node name="ShopButton" type="Button" parent="HUD"]
+layout_mode = 0
+offset_left = 171.0
+offset_top = 20.0
+offset_right = 295.0
+offset_bottom = 68.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_wrgfk")
+text = "Shop"
 
 [node name="MainHbox" type="HBoxContainer" parent="HUD"]
 layout_mode = 0
@@ -101,20 +114,18 @@ script = ExtResource("5_6acxs")
 
 [node name="MainVbox" type="VBoxContainer" parent="HUD/HuntResultDisplay"]
 layout_mode = 0
-offset_left = 11.0
-offset_top = 12.0
-offset_right = 103.0
-offset_bottom = 120.0
+offset_right = 92.0
+offset_bottom = 108.0
 
 [node name="EnemyLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
 layout_mode = 2
 
-[node name="StatsLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
-layout_mode = 2
-
 [node name="EnemyGraphic" type="TextureRect" parent="HUD/HuntResultDisplay/MainVbox"]
 layout_mode = 2
-expand_mode = 5
+expand_mode = 3
+
+[node name="StatsLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
+layout_mode = 2
 
 [node name="RewardsLabel" type="Label" parent="HUD/HuntResultDisplay/MainVbox"]
 layout_mode = 2
@@ -182,6 +193,65 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="ShopMenu" type="Panel" parent="HUD"]
+layout_mode = 0
+offset_left = 440.0
+offset_top = 134.0
+offset_right = 724.0
+offset_bottom = 420.0
+script = ExtResource("6_gbdq2")
+
+[node name="CloseButton" type="Button" parent="HUD/ShopMenu"]
+layout_mode = 0
+offset_left = 261.0
+offset_top = -54.0
+offset_right = 318.0
+offset_bottom = -7.0
+text = "X"
+
+[node name="CategoriesContainer" type="VBoxContainer" parent="HUD/ShopMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WeaponsButton" type="Button" parent="HUD/ShopMenu/CategoriesContainer"]
+layout_mode = 2
+
+[node name="ArmorButton" type="Button" parent="HUD/ShopMenu/CategoriesContainer"]
+layout_mode = 2
+
+[node name="CharmsButton" type="Button" parent="HUD/ShopMenu/CategoriesContainer"]
+layout_mode = 2
+
+[node name="GreasesButton" type="Button" parent="HUD/ShopMenu/CategoriesContainer"]
+layout_mode = 2
+
+[node name="ShopSubMenu" type="Panel" parent="HUD/ShopMenu"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = -8.0
+offset_right = 340.0
+offset_bottom = 294.0
+
+[node name="ItemListContainer" type="VBoxContainer" parent="HUD/ShopMenu/ShopSubMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackButton" type="Button" parent="HUD/ShopMenu/ShopSubMenu"]
+layout_mode = 0
+offset_left = 215.0
+offset_top = -49.0
+offset_right = 277.0
+offset_bottom = 2.0
+text = "X"
+
 [node name="AvatarMenu" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 60.0
@@ -220,9 +290,9 @@ offset_bottom = -0.169998
 grow_horizontal = 2
 grow_vertical = 2
 mouse_force_pass_scroll_events = false
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -238,9 +308,9 @@ offset_right = 115.904
 offset_bottom = 95.83
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -256,9 +326,9 @@ offset_right = -108.096
 offset_bottom = 95.83
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -274,9 +344,9 @@ offset_right = -108.096
 offset_bottom = 199.83
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -292,9 +362,9 @@ offset_right = 3.90399
 offset_bottom = 279.83
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 
@@ -310,9 +380,9 @@ offset_right = 115.904
 offset_bottom = 199.83
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/normal = ExtResource("8_ymxjg")
 theme_override_styles/hover = ExtResource("8_ymxjg")
 theme_override_styles/pressed = ExtResource("8_ymxjg")
-theme_override_styles/normal = ExtResource("8_ymxjg")
 icon_alignment = 1
 expand_icon = true
 

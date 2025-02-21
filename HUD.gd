@@ -7,11 +7,13 @@ extends Control  # HUD
 @onready var background = find_child("TextureRect")  # Get background texture
 @onready var travel_menu = $TravelMenu  # Popup menu for locations
 @onready var travel_vbox = $TravelMenu/Panel/VBoxContainer  # VBox inside popup
+@onready var inventory_list = $InventoryPanel/VBoxContainer  # Add this node in UI
 
 # Background images for locations
 var locations = {
 	"Mayflower": "res://assets/backgrounds/mayflower.png",
-	"Cave Entrance": "res://assets/backgrounds/cave_entrance.png"
+	"Cave": "res://assets/backgrounds/cave_entrance.png",
+	
 }
 
 # **Ensure _update_background is properly defined**
@@ -95,3 +97,22 @@ func _on_location_selected(location):
 
 func _on_travel_button_pressed() -> void:
 	pass # Replace with function body.
+
+func _update_inventory_display():
+	if not inventory_list:
+		print("Error: Inventory panel not found!")
+		return
+
+	# Clear old items
+	for child in inventory_list.get_children():
+		child.queue_free()
+
+	# Display current inventory
+	for category in GameManager.inventory.keys():
+		for item in GameManager.inventory[category]:
+			var item_button = Button.new()
+			item_button.text = "%s (%s)" % [item.name, category.capitalize()]
+			item_button.connect("pressed", Callable(self, "_equip_item").bind(category, item))
+			inventory_list.add_child(item_button)
+
+	print("Inventory updated:", GameManager.inventory)

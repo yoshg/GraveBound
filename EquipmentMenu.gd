@@ -78,7 +78,7 @@ func update_items():
 
 		# **Make the item selectable**
 		var select_button = Button.new()
-		select_button.text = "Equip " + item["name"]
+		select_button.text = item["name"]
 		select_button.connect("pressed", Callable(self, "_on_item_selected").bind(item))
 		item_container.add_child(select_button)
 		

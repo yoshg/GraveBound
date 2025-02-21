@@ -13,7 +13,7 @@ func _ready():
 func _add_fight_log(result: Dictionary):
 	show()  # Make the panel visible when a fight is logged
 	
-# Log Entry Container
+	# Log Entry Container
 	var log_entry = HBoxContainer.new()
 	log_entry.custom_minimum_size = Vector2(250, 50)  # Set a fixed row height
 	log_entry.size_flags_horizontal = Control.SIZE_EXPAND_FILL  # Make sure it expands horizontally
@@ -25,9 +25,8 @@ func _add_fight_log(result: Dictionary):
 	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	thumbnail.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	thumbnail.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # Prevent stretching
-	thumbnail.size_flags_vertical = Control.SIZE_SHRINK_CENTER  # Prevent stretchingCT_CENTERED
-	
-	
+	thumbnail.size_flags_vertical = Control.SIZE_SHRINK_CENTER  # Prevent stretching
+
 	# Ensure the image exists before assigning
 	if result.enemy_name in GameManager.enemy_images:
 		thumbnail.texture = GameManager.enemy_images[result.enemy_name]
@@ -37,12 +36,19 @@ func _add_fight_log(result: Dictionary):
 
 	# Enemy Info Label
 	var log_text = Label.new()
-	log_text.text = "%s - Loot: %d Gold, %d XP" % [
-		result.enemy_name, result.gold_drop, result.xp_drop
-	]
+	if result.player_defeated:
+		# Player lost, only show defeat message
+		log_text.text = "☠️ Defeated by %s" % result.enemy_name
+	else:
+		# Player won, show loot and XP
+		log_text.text = "%s - Loot: %d Gold, %d XP" % [
+			result.enemy_name, result.gold_drop, result.xp_drop
+		]
+
 	log_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	log_text.add_theme_font_size_override("font_size", 14)  # Increase readability
 	print("Log entry added:", log_text.text)
+
 	# Add elements to entry
 	log_entry.add_child(thumbnail)
 	log_entry.add_child(log_text)
