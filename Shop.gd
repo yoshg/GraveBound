@@ -64,7 +64,7 @@ func _show_shop_items(category: String):
 		item_button.text = "%s - %d Gold" % [item.name, item.price]
 		item_button.connect("pressed", Callable(self, "_attempt_purchase").bind(category, item))
 		item_list_container.add_child(item_button)
-
+	_update_shop_display(category)
 	categories_container.hide()
 	shop_submenu.show()
 
@@ -148,7 +148,25 @@ func _attempt_purchase(category: String, item: Dictionary):
 
 		GameManager.add_item(slot, item_to_add)  # Store in inventory
 		GameManager.emit_signal("stats_updated")  # Refresh UI
+		
+		# ✅ Remove item from the shop inventory
+		shop_inventory[category].erase(item)
+		_update_shop_display(category)  # Refresh the shop menu
 		print("Purchased:", item.name)
 	else:
 		print("Not enough gold to buy", item.name)
+
+func _update_shop_display(category: String):
+	# Clear previous items
+	for child in item_list_container.get_children():
+		child.queue_free()
+
+	# Show remaining items from selected category
+	for item in shop_inventory[category]:
+		var item_button = Button.new()
+		item_button.text = "%s - %d Gold" % [item.name, item.price]
+		item_button.connect("pressed", Callable(self, "_attempt_purchase").bind(category, item))
+		item_list_container.add_child(item_button)
+
+	print("Updated shop display for:", category)
 
