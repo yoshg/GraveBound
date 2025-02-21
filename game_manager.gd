@@ -477,4 +477,3 @@ func remove_item(slot: String, item_name: String):
 					print(item_name + " removed from inventory!")
 				return
 	print("Item not found:", item_name)
-
