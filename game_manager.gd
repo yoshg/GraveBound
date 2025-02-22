@@ -1,28 +1,30 @@
 
 extends Node
 
-signal hunt_reset
-signal stats_updated
-signal fight_recorded
-signal show_comparison(text, position)
-signal location_changed  # Added new signal
+# Signals
+signal	hunt_reset
+signal	stats_updated
+signal	fight_recorded
+signal	show_comparison(text: String, position: Vector2)
+signal	location_changed
 
-const LootTable = preload("res://LootTable.gd")  # Update with the correct path
+# Preloads
+const	LootTable = preload("res://LootTable.gd")
 
-# Player stats
-var player_gold: int = 10000000
-var player_experience: int = 0
-var player_strength: int = 100
-var player_defense: int = 100
-var current_location = "Mayflower"
-var current_enemy = null
-var player_attack: Dictionary = {}  # ✅ Declare attack variable properly
-var player_weapon: Dictionary = {}  # ✅ Properly declared variable for equipped weapon
-var player_armor_pierce: Dictionary = {}  # ✅ Tracks armor piercing stats
-var player_flat_defense: int = 0  # ✅ Stores total flat defense
-var player_resistances: Dictionary = {}  # ✅ Stores resistance values for attack types
+# Player Stats
+var	player_gold: int = 10000000
+var	player_experience: int = 0
+var	player_strength: int = 100	# Consider removing if unused
+var	player_defense: int = 100	# Consider removing if unused
+var	player_flat_defense: int = 0	# Tracks total flat defense from equipment
+var	player_resistances: Dictionary = {}	# Tracks resistances
+var	player_attack: Dictionary = {}	# Attack stats from equipped weapon
+var	player_armor_pierce: Dictionary = {}	# Armor-piercing stats from weapon
+var	current_location: String = "Mayflower"
+var	current_enemy: Dictionary = {}
 
-var enemy_images = {
+# Enemy Images
+var	enemy_images: Dictionary = {
 	"Goblin": preload("res://images/goblin.png"),
 	"Orc": preload("res://images/orc.png"),
 	"Bandit": preload("res://images/bandit.png"),
@@ -152,7 +154,7 @@ func get_random_enemy_name() -> String:
 
 
 # Inventory system
-var inventory = {
+var inventory: Dictionary = {
 	
 	"helmet": [
 		{
@@ -252,7 +254,7 @@ var inventory = {
 }
 
 # Currently equipped items
-var equipped_items = {
+var equipped_items: Dictionary =  {
 	"helmet": null,
 	"breastplate": null,
 	"gloves": null,
@@ -262,45 +264,56 @@ var equipped_items = {
 }
 
 # Function to equip an item
-func equip_item(slot: String, item: Dictionary):
-	# Get the currently equipped item in the slot
-	var old_item = equipped_items.get(slot, null)
-
-	# ✅ If an item was previously equipped, subtract its stats first
-	if old_item and "stats" in old_item:
-		player_flat_defense -= old_item.stats.get("flat_defense", 0)
-		for attack_type in old_item.stats.get("resistances", {}).keys():
-			player_resistances[attack_type] -= old_item.stats["resistances"].get(attack_type, 0)
-
-	# ✅ Now equip the new item
+func	equip_item(slot: String, item: Dictionary) -> void:
+	var	old_item = equipped_items.get(slot)
+	if	old_item:
+		_remove_item_stats(old_item)
+	
 	equipped_items[slot] = item.duplicate(true)
-
-	# ✅ Add new item's stats
-	if "stats" in item:
-		player_flat_defense += item.stats.get("flat_defense", 0)
-		for attack_type in item.stats.get("resistances", {}).keys():
-			player_resistances[attack_type] = player_resistances.get(attack_type, 0) + item.stats["resistances"].get(attack_type, 0)
-
-	# Debugging
-	print_debug("Equipped", item.get("name", "Unknown Item"), "Flat Defense:", player_flat_defense, "Resistances:", player_resistances)
-	emit_signal("stats_updated")  # ✅ Ensures UI updates
+	_apply_item_stats(item)
+	emit_signal("stats_updated")
+	print_debug("Equipped:", item["name"], "to", slot)
 
 
 
 
-func unequip_item(slot: String):
-	if slot in equipped_items and equipped_items[slot] != null:
-		var item = equipped_items[slot]
-
-		# Reverse stat changes if the item has stats
-		if item.has("stats"):
-			_update_player_stats(item["stats"], true)
-
-		# Remove item from equipped items
+func	unequip_item(slot: String) -> void:
+	if	slot in equipped_items and equipped_items[slot] != null:
+		var	item = equipped_items[slot]
+		_remove_item_stats(item)
 		equipped_items[slot] = null
-
 		emit_signal("stats_updated")
-		print("Unequipped", item.get("name", "Unknown Item"), "from", slot)
+		print_debug("Unequipped:", item.get("name", "Unknown Item"), "from", slot)
+
+func	_apply_item_stats(item: Dictionary) -> void:
+	var	stats = item.get("stats", {})
+	player_flat_defense += stats.get("flat_defense", 0)
+	
+	for	attack_type in stats.get("resistances", {}):
+		player_resistances[attack_type] = player_resistances.get(attack_type, 0) + stats.get(attack_type, 0)
+	
+	if	"attack" in item:
+		player_attack = item["attack"].duplicate(true)
+	if	"armor_pierce" in item:
+		player_armor_pierce = item["armor_pierce"].duplicate(true)
+	
+	print_debug("Stats after equip - Flat Defense:", player_flat_defense, "Resistances:", player_resistances)
+
+func	_remove_item_stats(item: Dictionary) -> void:
+	var	stats = item.get("stats", {})
+	player_flat_defense -= stats.get("flat_defense", 0)
+	
+	for	attack_type in stats.get("resistances", {}):
+		player_resistances[attack_type] = player_resistances.get(attack_type, 0) - stats.get(attack_type, 0)
+		if	player_resistances[attack_type] <= 0:
+			player_resistances.erase(attack_type)
+	
+	if	"attack" in item:
+		player_attack.clear()
+	if	"armor_pierce" in item:
+		player_armor_pierce.clear()
+	
+	print_debug("Stats after removal - Flat Defense:", player_flat_defense, "Resistances:", player_resistances)
 
 
 func _update_player_stats(stats: Dictionary, remove: bool = false):
@@ -314,23 +327,6 @@ func _update_player_stats(stats: Dictionary, remove: bool = false):
 
 	print("Updated stats:", "Defense:", player_defense, "Power:",)
 	
-
-# Apply stat changes when equipping items
-func apply_item_stats():
-	# Reset stats to base values
-	player_strength = 100
-	player_defense = 100
-
-	# Apply bonuses from equipped items
-	for slot in equipped_items:
-		var item = equipped_items[slot]
-		if item:
-			if "power" in item:
-				player_strength += item.power
-			if "defense" in item:
-				player_defense += item.defense
-
-	emit_signal("stats_updated")
 
 func change_location(new_location: String):
 	if new_location in ["Mayflower", "Cave"]:  # Ensure location is valid
@@ -417,19 +413,13 @@ func calculate_effective_enemy_power(base_enemy_power: float, attack_type: Strin
 	print_debug("Final Enemy Power:", reduced_power, "Defense Applied:", player_flat_defense, "Resistance Applied:", resistance)
 	return reduced_power
 
-func calculate_total_flat_defense() -> int:
-	var total_flat_defense = 0
-
-	# ✅ Loop through equipped armor and sum flat defense
-	for slot in ["helmet", "breastplate", "gloves", "greaves", "shoes"]:
-		var item = equipped_items.get(slot, null)
-		if item and item.has("stats") and item["stats"].has("flat_defense"):
-			total_flat_defense += item["stats"]["flat_defense"]
-
-	# ✅ Debugging: Ensure correct calculations
-	print_debug("Total Flat Defense:", total_flat_defense)
-
-	return total_flat_defense
+func	calculate_total_flat_defense() -> int:
+	var	total = 0
+	for	slot in equipped_items:
+		var	item = equipped_items[slot]
+		if	item and "stats" in item:
+			total += item["stats"].get("flat_defense", 0)
+	return	total
 
 # Function to add an item to inventory
 func add_item(slot: String, item_data: Dictionary):
