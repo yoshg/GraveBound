@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b35gdu3sam2dd"]
+[gd_scene load_steps=18 format=3 uid="uid://b35gdu3sam2dd"]
 
 [ext_resource type="Script" path="res://HUD.gd" id="1_4jmjs"]
 [ext_resource type="Script" path="res://HuntButton.gd" id="3_wxwgq"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://d4idewviarqx2" path="res://assets/armor/Avatar.png" id="8_et3ww"]
 [ext_resource type="StyleBox" uid="uid://clnatw2tapb6v" path="res://assets/ButtonThemes/Main_menu.tres" id="8_ymxjg"]
 [ext_resource type="Script" path="res://game_manager.gd" id="10_57m1h"]
+[ext_resource type="Script" path="res://Comparison_Panel.gd" id="11_tuhsy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7qf2c"]
 bg_color = Color(0, 0, 0, 0.737255)
@@ -25,6 +26,13 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lxvsi"]
 texture = ExtResource("8_et3ww")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_682oa"]
+bg_color = Color(0, 0, 0, 0.811765)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -416,12 +424,20 @@ layout_mode = 2
 [node name="DefenseLabel" type="Label" parent="AvatarMenu/StatsBox"]
 layout_mode = 2
 
-[node name="ComparisonLabel" type="Label" parent="AvatarMenu"]
-layout_mode = 0
-offset_left = 505.0
-offset_top = 162.0
-offset_right = 655.0
-offset_bottom = 237.0
+[node name="ComparisonPanel" type="Panel" parent="AvatarMenu"]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = -1
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_682oa")
+script = ExtResource("11_tuhsy")
+
+[node name="ComparisonLabel" type="Label" parent="AvatarMenu/ComparisonPanel"]
+offset_right = 40.0
+offset_bottom = 23.0
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("10_57m1h")

@@ -30,7 +30,14 @@ func _update_background(location):
 	else:
 		print("WARNING: No background found for", location)
 
+
+func print_nodes(node, indent = ""):
+	print(indent + node.name)
+	for child in node.get_children():
+		print_nodes(child, indent + "  ")
+
 func _ready():
+	print_nodes(get_tree().root)
 	_setup_travel_menu()
 	GameManager.connect("stats_updated", Callable(self, "_update_ui"))
 	GameManager.connect("hunt_reset", Callable(self, "_update_ui"))

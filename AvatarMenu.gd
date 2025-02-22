@@ -9,17 +9,29 @@ extends Panel
 @onready var defense_label = $StatsBox/DefenseLabel
 @onready var strength_label = $StatsBox/StrengthLabel
 @onready var equipment_menu = $EquipmentMenu
-@onready var comparison_label = $ComparisonLabel
+@onready var comparison_panel = $ComparisonPanel
+@onready var comparison_label = $ComparisonPanel/ComparisonLabel
 
 func _ready():
-	
+	await get_tree().process_frame  # Ensure all nodes exist before accessing
+
+	# Check if the ComparisonPanel and ComparisonLabel exist
+	var comparison_panel = get_node_or_null("ComparisonPanel")
+	var comparison_label = get_node_or_null("ComparisonPanel/ComparisonLabel")
+
+	if not comparison_panel or not comparison_label:
+		print_debug("Error: ComparisonPanel or ComparisonLabel not found in AvatarMenu!")
+	else:
+		print_debug("ComparisonPanel and ComparisonLabel found successfully!")
+
+	# Now, connect the comparison signal
 	if GameManager:
 		GameManager.connect("stats_updated", Callable(self, "_update_avatar_stats"))
 		GameManager.connect("show_comparison", Callable(self, "_update_comparison"))
 	else:
-		print("ERROR: GameManager not found!")
-		
-	_update_avatar_stats()  # Initialize
+		print_debug("ERROR: GameManager not found!")
+
+	_update_avatar_stats()  # Initialize UI
 	
 	# Connect buttons for left-click (equip) and right-click (unequip)
 	helmet_button.connect("gui_input", Callable(self, "_on_slot_input").bind("helmet"))
@@ -75,5 +87,21 @@ func _update_avatar_stats():
 	# ✅ Debugging: Ensure values are correctly fetched
 	print_debug("Updated Avatar Stats - Attack Power:", attack_power, "Flat Defense:", flat_defense)
 
-func _update_comparison(text):
-	comparison_label.text = text
+func _update_comparison(text, position = Vector2.ZERO):
+	var comparison_panel = get_node_or_null("ComparisonPanel")
+	var comparison_label = get_node_or_null("ComparisonPanel/ComparisonLabel")
+
+	if not comparison_panel or not comparison_label:
+		print_debug("Error: ComparisonPanel or ComparisonLabel not found in AvatarMenu!")
+		return
+	
+	if text.strip_edges() == "":
+		comparison_panel.hide()  # Hide panel when text is empty
+	else:
+		comparison_label.text = text
+		comparison_panel.global_position = position
+		comparison_panel.show()
+
+	# Debugging: Print what is being assigned
+	print_debug("Comparison Label Text Set:", text)
+	print_debug("Comparison Panel Position:", position)

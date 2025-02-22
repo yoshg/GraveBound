@@ -1,29 +1,39 @@
 extends Panel
 
+signal show_comparison(text, position)
+
 @onready var grid_container = $GridContainer
 @onready var avatar_menu = get_node("/root/Main/AvatarMenu")
 var slot_buttons = {}  # Store slot buttons dynamically
 var current_slot = ""
+var comparison_panel = null  # Store the reference to prevent null errors
 
 func _ready():
+	# Delay execution until the next frame to ensure all nodes exist
+	await get_tree().process_frame  
+
+	# Now safely get the AvatarMenu
+	var avatar_menu = get_node_or_null("/root/Main/AvatarMenu")
+	
+	# Check if AvatarMenu exists
+	if not avatar_menu:
+		print_debug("Error: AvatarMenu not found!")
+		return
+	
+	# Now safely get the ComparisonPanel inside AvatarMenu
+	var comparison_panel = avatar_menu.get_node_or_null("ComparisonPanel")
+	var comparison_label = avatar_menu.get_node_or_null("ComparisonPanel/ComparisonLabel")
+
+	# Validate nodes
+	if not comparison_panel or not comparison_label:
+		print_debug("Error: ComparisonPanel or ComparisonLabel not found in AvatarMenu!")
+		return
+
+	print_debug("ComparisonPanel and ComparisonLabel found successfully in EquipmentMenu!")
+
+	# Now continue with the rest of your setup...
 	hide()  # Ensure the menu is hidden on game start
 	
-	# Locate AvatarMenu and fetch slot buttons
-	var main = get_tree().get_root().get_node("Main")
-	if main and main.has_node("AvatarMenu"):
-		var avatar_menu = main.get_node("AvatarMenu")
-		print("Avatar Menu Found:", avatar_menu)
-
-		# Dynamically get buttons from AvatarMenu
-		var slot_names = ["helmet", "breastplate", "gloves", "greaves", "shoes", "weapon"]
-		for slot in slot_names:
-			var button_path = slot.capitalize() + "Button"  # Example: "BreastplateButton"
-			if avatar_menu.has_node(button_path):
-				slot_buttons[slot] = avatar_menu.get_node(button_path)
-				print("Found button for slot:", slot, "->", slot_buttons[slot])
-			else:
-				print("WARNING: Button not found for slot:", slot)
-
 func show_menu(slot: String):
 	print("Equipment menu opened for:", slot)
 	current_slot = slot
@@ -92,37 +102,73 @@ func _compare_stats(new_item):
 	if not current_slot in GameManager.equipped_items:
 		return
 
-	var old_item = GameManager.equipped_items[current_slot]
-	# Ensure old_item and new_item have stats, defaulting to {"defense": 0, "strength": 0}
+	var old_item = GameManager.equipped_items.get(current_slot, null)
+	
+	# Ensure both items have stats, defaulting to `{}` if missing
 	var old_stats = old_item.get("stats", {}) if old_item != null else {}
 	var new_stats = new_item.get("stats", {})
 
 	# Ensure each stat exists, defaulting to 0
-	var old_defense = old_stats.get("defense", 0)
-	var new_defense = new_stats.get("defense", 0)
+	var old_defense = old_stats.get("flat_defense", 0)
+	var new_defense = new_stats.get("flat_defense", 0)
 
-	var old_strength = old_stats.get("strength", 0)
-	var new_strength = new_stats.get("strength", 0)
+	# Gather resistance stats
+	var old_resistances = old_stats.get("resistances", {})
+	var new_resistances = new_stats.get("resistances", {})
 
+	# Gather attack stats (if it's a weapon)
+	var old_attack = old_item.get("attack", {}) if old_item != null else {}
+	var new_attack = new_item.get("attack", {})
+
+	# Construct comparison text
 	var comparison_text = "Comparing:\n"
-	comparison_text += "Defense: " + str(old_defense) + " → " + str(new_defense) + "\n"
-	comparison_text += "Strength: " + str(old_strength) + " → " + str(new_strength)
-	
-	GameManager.emit_signal("show_comparison", comparison_text)
+	comparison_text += "Defense: %d → %d\n" % [old_defense, new_defense]
+
+	# Compare resistances
+	for attack_type in new_resistances.keys():
+		var old_resist = old_resistances.get(attack_type, 0)
+		var new_resist = new_resistances.get(attack_type, 0)
+		comparison_text += "%s Resistance: %.2f → %.2f\n" % [attack_type, old_resist, new_resist]
+
+	# Compare attack stats if it's a weapon
+	if new_attack.size() > 0:
+		comparison_text += "\nAttack Stats:\n"
+		for attack_type in new_attack.keys():
+			var old_attack_value = old_attack.get(attack_type, 0)
+			var new_attack_value = new_attack.get(attack_type, 0)
+			comparison_text += "%s: %d → %d\n" % [attack_type, old_attack_value, new_attack_value]
+
+	# ✅ Move the comparison menu to the mouse position
+	var mouse_pos = get_viewport().get_mouse_position()
+	print_debug("Emitting Comparison Signal:", comparison_text)
+	GameManager.emit_signal("show_comparison", comparison_text, mouse_pos)
 
 func _clear_comparison():
-	GameManager.emit_signal("show_comparison", "")
+	GameManager.emit_signal("show_comparison", "")  # Send an empty string to clear it
 
 func equip_item(item):
 	print_debug("Equipping:", item["name"], "to slot:", current_slot)
+
+	# Get the item's stats safely
+	var item_stats = item.get("stats", {})
+
+	# Ensure attack and armor_pierce are extracted correctly
+	var attack_stats = item_stats.get("attack", {}).duplicate(true)  # ✅ Ensure copy
+	var armor_pierce_stats = item_stats.get("armor_pierce", {}).duplicate(true)  # ✅ Ensure copy
 
 	# Store in GameManager
 	GameManager.equipped_items[current_slot] = {
 		"name": item.get("name", ""),
 		"icon_path": item.get("icon_path", ""),
-		"flat_defense": item.get("stats", {}).get("flat_defense", 0),
-		"resistances": item.get("stats", {}).get("resistances", {})
+		"flat_defense": item_stats.get("flat_defense", 0),
+		"resistances": item_stats.get("resistances", {}).duplicate(true),  # ✅ Ensure copy
+		"attack": attack_stats,  # ✅ Now properly stored
+		"armor_pierce": armor_pierce_stats  # ✅ Now properly stored
 	}
+
+	# Debugging: Confirm attack and armor_pierce are set correctly
+	print_debug("Weapon Attack:", attack_stats)
+	print_debug("Armor Pierce:", armor_pierce_stats)
 
 	# Apply the item's defense and resistances
 	GameManager.player_defense += GameManager.equipped_items[current_slot]["flat_defense"]

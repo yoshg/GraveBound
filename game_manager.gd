@@ -4,11 +4,10 @@ extends Node
 signal hunt_reset
 signal stats_updated
 signal fight_recorded
-signal show_comparison(text)
+signal show_comparison(text, position)
 signal location_changed  # Added new signal
 
 const LootTable = preload("res://LootTable.gd")  # Update with the correct path
-
 
 # Player stats
 var player_gold: int = 10000000
@@ -17,6 +16,11 @@ var player_strength: int = 100
 var player_defense: int = 100
 var current_location = "Mayflower"
 var current_enemy = null
+var player_attack: Dictionary = {}  # ✅ Declare attack variable properly
+var player_weapon: Dictionary = {}  # ✅ Properly declared variable for equipped weapon
+var player_armor_pierce: Dictionary = {}  # ✅ Tracks armor piercing stats
+var player_flat_defense: int = 0  # ✅ Stores total flat defense
+var player_resistances: Dictionary = {}  # ✅ Stores resistance values for attack types
 
 var enemy_images = {
 	"Goblin": preload("res://images/goblin.png"),
@@ -52,13 +56,13 @@ func hunt() -> Dictionary:
 		print_debug("Error: Current enemy is missing 'name':", current_enemy)
 		return {}
 
-	# ✅ Use fixed enemy power
+	# ✅ Use fixed enemy power **with defense reduction**
 	var attack_power = calculate_effective_attack()
-	var enemy_power = max(0, current_enemy.base_power)  # Use predefined power
+	var effective_enemy_power = calculate_effective_enemy_power(current_enemy.base_power, "Slash")  # ✅ Pass base power and attack type
 
 	# ✅ Calculate win probability
 	var alpha = 0.5
-	var win_probability = pow(attack_power, alpha) / (pow(attack_power, alpha) + pow(enemy_power, alpha))
+	var win_probability = pow(attack_power, alpha) / (pow(attack_power, alpha) + pow(effective_enemy_power, alpha))
 	win_probability = clamp(win_probability, 0.0, 1.0)  # Ensure valid range
 
 	# ✅ Single roll for outcome (no ties)
@@ -68,7 +72,7 @@ func hunt() -> Dictionary:
 
 	# ✅ Debugging battle results
 	print_debug("Effective Attack Power:", attack_power)
-	print_debug("Effective Enemy Power:", enemy_power)
+	print_debug("Effective Enemy Power (After Defense Reduction):", effective_enemy_power)  # ✅ Now properly reduced
 	print_debug("Win Probability: %.2f%%" % (win_probability * 100))  # Show as percentage
 	print_debug("Rolled Value:", roll)
 	print_debug("Enemy Defeated:", enemy_defeated)
@@ -90,7 +94,7 @@ func hunt() -> Dictionary:
 	# Store fight results
 	var result = {
 		"enemy_name": current_enemy.name,
-		"enemy_power": enemy_power,
+		"enemy_power": effective_enemy_power,  # ✅ Now reflects defense reduction
 		"enemy_defense": current_enemy.base_power,
 		"enemy_defeated": enemy_defeated,
 		"player_defeated": player_defeated,
@@ -259,25 +263,28 @@ var equipped_items = {
 
 # Function to equip an item
 func equip_item(slot: String, item: Dictionary):
-	# Unequip old item first (if any)
-	if slot in equipped_items:
-		var old_item = equipped_items[slot]
-		if old_item != null and old_item.has("stats"):
-			_update_player_stats(old_item["stats"], true)
+	# Get the currently equipped item in the slot
+	var old_item = equipped_items.get(slot, null)
 
-	# Equip new item
-	equipped_items[slot] = item
-	
-	# If equipping a weapon, update GameManager
-	if slot == "weapon":
-		GameManager.equipped_items["weapon"] = item
+	# ✅ If an item was previously equipped, subtract its stats first
+	if old_item and "stats" in old_item:
+		player_flat_defense -= old_item.stats.get("flat_defense", 0)
+		for attack_type in old_item.stats.get("resistances", {}).keys():
+			player_resistances[attack_type] -= old_item.stats["resistances"].get(attack_type, 0)
 
-	# Apply stats
-	if item.has("stats"):
-		_update_player_stats(item["stats"], false)
+	# ✅ Now equip the new item
+	equipped_items[slot] = item.duplicate(true)
 
-	# Emit signal to update UI
-	emit_signal("stats_updated")
+	# ✅ Add new item's stats
+	if "stats" in item:
+		player_flat_defense += item.stats.get("flat_defense", 0)
+		for attack_type in item.stats.get("resistances", {}).keys():
+			player_resistances[attack_type] = player_resistances.get(attack_type, 0) + item.stats["resistances"].get(attack_type, 0)
+
+	# Debugging
+	print_debug("Equipped", item.get("name", "Unknown Item"), "Flat Defense:", player_flat_defense, "Resistances:", player_resistances)
+	emit_signal("stats_updated")  # ✅ Ensures UI updates
+
 
 
 
@@ -360,78 +367,55 @@ func calculate_base_attack() -> float:
 
 
 func calculate_effective_attack() -> float:
-	# Get the equipped weapon from equipped_items dictionary
-	var weapon = equipped_items.get("weapon", null)
-	
-	if weapon == null:
-		print_debug("No weapon equipped!")  # ✅ Debugging
-		return 0  # No weapon equipped
+	# Get the equipped weapon
+	var weapon = GameManager.equipped_items.get("weapon", null)  # ✅ Ensure correct slot
+	if not weapon:
+		print_debug("No weapon equipped! Returning 0 attack.")
+		return 0
 
-	print_debug("Equipped Weapon:", weapon["name"])
-	
+	var attack_stats = weapon.get("attack", {})  # ✅ Prevents crash if attack is missing
+	if attack_stats.is_empty():
+		print_debug("Equipped weapon has no attack stats! Returning 0 attack.")
+		return 0
+
 	var total_attack = 0.0
-	for attack_type in weapon.attack.keys():
-		var weapon_power = weapon.attack[attack_type]
-		var resistance = current_enemy.resistances.get(attack_type, 1.0)
-		var armor_pierce = weapon.armor_pierce.get(attack_type, 0.0)
 
-		# Apply armor piercing
-		resistance = max(0, resistance - armor_pierce)
+	for attack_type in attack_stats.keys():
+		var weapon_power = attack_stats.get(attack_type, 0)  # ✅ Prevents crash if attack type is missing
+		var enemy_resistance = current_enemy.resistances.get(attack_type, 0)  # ✅ Fetch enemy resistance
+
+		# Apply armor-piercing effects if they exist
+		var armor_pierce = GameManager.player_armor_pierce.get(attack_type, 0)  # ✅ Get armor pierce for the attack type
+		var effective_resistance = max(0, enemy_resistance - armor_pierce)  # ✅ Subtract armor pierce, but keep resistance non-negative
 
 		# Calculate effective attack power
-		var attack_value = weapon_power * (1.0 - resistance)
+		var attack_value = weapon_power * (1.0 - effective_resistance)  # ✅ Subtract adjusted resistance correctly
+		if attack_value < 0:
+			attack_value = 0  # ✅ Ensure attack doesn't go negative
+
 		total_attack += attack_value
-		
-	# ✅ Debugging logs
-		print_debug("Attack Type:", attack_type, "Power:", weapon_power, "Effective:", attack_value)
 
-	# ✅ Debug final attack power
+		# Debugging output
+		print_debug("Attack Type:", attack_type, "Power:", weapon_power, "Enemy Resistance:", enemy_resistance, 
+			"Armor Pierce:", armor_pierce, "Effective Resistance:", effective_resistance, "Effective:", attack_value)
+
 	print_debug("Total Attack Power:", total_attack)
-
 	return total_attack
 
 
-func calculate_effective_enemy_power() -> float:
-	if current_enemy == null:
-		return 0  # No enemy set
+func calculate_effective_enemy_power(base_enemy_power: float, attack_type: String) -> float:
+	# Get player's resistance to this attack type
+	var resistance = player_resistances.get(attack_type, 0)  # ✅ Fetch resistance from player stats
 
-	# Get equipped armor pieces
-	var armor_pieces = ["helmet", "breastplate", "gloves", "greaves", "shoes"]
-	var flat_defense = 0
-	var resistances = {}
+	# Apply resistance correctly
+	var reduced_power = base_enemy_power * (1.0 - resistance) - player_flat_defense  # ✅ Flat defense and resistances reduce damage
+	
+	if reduced_power < 0:
+		reduced_power = 0  # ✅ Ensure enemy power doesn't go negative
 
-	# Debugging: Check if armor exists in `equipped_items`
-	print_debug("Equipped Armor Items:", equipped_items)
-
-	# Loop through equipped armor
-	for slot in armor_pieces:
-		var armor = equipped_items.get(slot, null)
-		if armor != null and armor.has("stats"):  # ✅ Fix: Ensure we're accessing stats
-			print_debug("Processing Armor:", armor["name"], "Slot:", slot)
-
-			# ✅ Fix: Extract `flat_defense` from the `stats` dictionary
-			flat_defense += armor["stats"].get("flat_defense", 0)
-
-			# ✅ Fix: Extract `resistances` from the `stats` dictionary
-			var armor_resistances = armor["stats"].get("resistances", {})
-			for attack_type in armor_resistances.keys():
-				resistances[attack_type] = resistances.get(attack_type, 0) + armor_resistances[attack_type]
-
-	# Debugging armor values
-	print_debug("Final Flat Defense:", flat_defense)
-	print_debug("Final Resistances:", resistances)
-
-	# Apply flat defense reduction
-	var enemy_power = max(0, current_enemy.base_power - flat_defense)
-
-	# Apply resistances
-	for attack_type in resistances.keys():
-		enemy_power *= (1 - resistances[attack_type])
-
-	# Debug final enemy power
-	print_debug("Final Enemy Power:", enemy_power)
-
-	return max(0, enemy_power)
+	# Debugging
+	print_debug("Final Enemy Power:", reduced_power, "Defense Applied:", player_flat_defense, "Resistance Applied:", resistance)
+	return reduced_power
 
 func calculate_total_flat_defense() -> int:
 	var total_flat_defense = 0
